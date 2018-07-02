@@ -11,6 +11,7 @@ workloads=$(ls -d $benchmarkDir*/)
 
 while read -r line; do
 	cp -r $configDir/* $line
+	echo copying configs to $line
 done <<< "$workloads"
 BLUE='\033[0;34m'
 NC='\033[0m'

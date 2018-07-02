@@ -1,11 +1,11 @@
 #!/bin/bash
 benchmarkDir=$1
 runFile="run"
-config="GTX480"
-resultDir=~/workspace/result
+config="GTX1080"
+resultDir=~/workloads/result
 if [[ -z "$benchmarkDir" ]]
 then
-        echo Error: Two few arguments!
+        echo Error: Too few arguments!
         exit 1
 fi
 
@@ -24,9 +24,10 @@ while read -r line; do
 	workload=$(echo "$line"|rev | cut -d '/' -f 2 |rev)
 	echo $line
 	cd $line
-	bash run  > $resultDir/$config/$workload &
+	echo Starting execution of $workload
+	bash $runFile  > $resultDir/$config/$workload &
 	processList="$processList $!"
-	echo $processList
 	disown
 	cd - > /dev/null
 done <<< "$workloads"
+echo $processList > $resultDir/$config/PL.txt
