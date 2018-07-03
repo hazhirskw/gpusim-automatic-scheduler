@@ -2,6 +2,7 @@
 benchmarkDir=$1
 runFile="run"
 config="GTX1080"
+isParboil="1"
 resultDir=~/workloads/result
 if [[ -z "$benchmarkDir" ]]
 then
@@ -20,18 +21,28 @@ if [ ! -d "$resultDir/$config" ]; then
 	mkdir $resultDir/$config
 fi
 workloads=$(ls -d $benchmarkDir*/)
+if [[ ! -z $isParboil ]];then
+	cd parboil
+fi
 while read -r line; do
 	workload=$(echo "$line"|rev | cut -d '/' -f 2 |rev)
-	echo $line
-	cd $line
 	echo Starting execution of $workload
-	bash $runFile  > $resultDir/$config/$workload &
+	pwd
+	if [[ -z $isParboil ]];then
+		cd $line
+		bash $runFile  > $resultDir/$config/$workload &
+	else
+		bash $workload >  $resultDir/$config/$workload &
+
+	fi
 	processList="$processList $!"
 	disown
-	cd - > /dev/null
+	if [[ -z $isParboil ]];then
+		cd - > /dev/null
+	fi
 done <<< "$workloads"
 
 #Print PID of every workload simulation to the PL.txt file
 echo $processList > $resultDir/$config/PL.txt
 #Schedule a process for killing simulation processes after a certain time. e.g 48 hours
-echo "cat $resultDir/$config/PL.txt | xargs kill -9" | at now + 48 hours
+echo "cat $resultDir/$config/PL.txt | xargs pkill -9 -P" | at now + 48 hours
