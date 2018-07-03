@@ -30,4 +30,8 @@ while read -r line; do
 	disown
 	cd - > /dev/null
 done <<< "$workloads"
+
+#Print PID of every workload simulation to the PL.txt file
 echo $processList > $resultDir/$config/PL.txt
+#Schedule a process for killing simulation processes after a certain time. e.g 48 hours
+echo "cat $resultDir/$config/PL.txt | xargs kill -9" | at now + 48 hours
