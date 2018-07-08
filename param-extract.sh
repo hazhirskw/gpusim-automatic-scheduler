@@ -33,6 +33,7 @@ WMMA=""
 re='^[+-]?[0-9]+\.?[0-9]*$'
 avg=""
 prevWorkload=""
+declare -i noc=0
 for element in $allOccurance; do
 	if [[ $element =~ $re ]]; then
 		if (( $(echo "$element > $max" | bc -l) )); then
@@ -42,19 +43,21 @@ for element in $allOccurance; do
 			min=$element
 		fi
 		lastElement=$element
+		noc=$noc+1
 	else
 		if [[ ! -z "${prevWorkload// }" ]]; then
 			echo extracting data for $prevWorkload output file...
-			WMMA="$WMMA $prevWorkload $min $max $lastElement"
+			WMMA="$WMMA $prevWorkload $min $max $lastElement $noc"
 		fi
 		min="9999999999999999999999999999999999999"
 		max="0"
 		prevWorkload=$element
+		noc=0
 	fi
 done
 
 echo extracting data for $prevWorkload output file...
-WMMA="$WMMA $prevWorkload $min $max $lastElement"
+WMMA="$WMMA $prevWorkload $min $max $lastElement $noc"
 echo .
 echo .
 echo .
@@ -63,7 +66,7 @@ prevWorkload=""
 excelEntry=""
 outputFile="$(echo $resultDir | cut -d '/' -f 2)-$param.xls"
 echo Writing results to the $outputFile ...
-echo -e "$param\tMin\tMax\tAVG" > $outputFile
+echo -e "$param\tMin\tMax\tAVG\tN_OC" > $outputFile
 for element in $WMMA; do
 	if  [[ $element =~ $re ]]; then
 		excelEntry="$excelEntry\t$element"
