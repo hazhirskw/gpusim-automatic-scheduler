@@ -11,14 +11,19 @@ then
 	exit 1
 fi
 grepResult=$(grep -r $param $resultDir)
+if [[ -z "$grepResult" ]]
+then
+	echo "No occurance of $param is found!"
+	exit 1
+fi
 prevWorkload="empty"
 while read -r line; do
 	currentWorkload=$(echo $line | cut -d '/' -f 3 | cut -d ':' -f 1)
 	if [ $currentWorkload != $prevWorkload ]; then
 		allOccurance="$allOccurance $currentWorkload"
 	fi
-	paramValue=$(echo $line | rev | cut -d '=' -f 1 | rev)
-	allOccurance="$allOccurance$paramValue"
+	paramValue=$(echo $line | awk -F $param '{print $2}' | cut -d '='  -f 2 | tr -d '[:space:]')
+	allOccurance="$allOccurance $paramValue"
 	prevWorkload=$currentWorkload	
 done <<< "$grepResult"
 
@@ -32,7 +37,8 @@ for element in $allOccurance; do
 	if [[ $element =~ $re ]]; then
 		if (( $(echo "$element > $max" | bc -l) )); then
 			max=$element
-		elif (( $(echo "$min > $element" | bc -l) )); then
+		fi
+		if (( $(echo "$min > $element" | bc -l) )); then
 			min=$element
 		fi
 		lastElement=$element

@@ -15,7 +15,7 @@ case $config in *\ *) echo "${RED} Error: Put the config name in ther first line
 exit 1
 ;; esac
 
-resultDir=~/workloads/result
+resultDir=~/workspace/gpusim-automatic-scheduler/result
 if [[ -z "$benchmarkDir" ]]
 then
         echo Error: Too few arguments!
@@ -33,12 +33,10 @@ if [ ! -d "$resultDir/$config" ]; then
 #	exit 1
 	mkdir $resultDir/$config
 fi
-echo benchmark= $benchmarkname
 workloads=$(ls -d $benchmarkDir*/)
 if [ "$benchmarkName" = "parboil" ]; then
 	cd parboil
 fi
-echo workloads=$workloads
 while read -r line; do
 	workload=$(echo "$line"|rev | cut -d '/' -f 2 |rev)
 	echo Starting execution of $workload
