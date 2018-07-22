@@ -37,8 +37,8 @@ while read -r line; do
 		echo -ne "Processing of ${RED}$i${NC} line is finished\033[0K\r"
 	fi
 
-echo ""
 done <<< "$grepResult"
+echo ""
 echo Calculating Min Max Average...
 #Second Part: Determine the WMMA string which is in format WMMA="$WMMA $prevWorkload $min $max $lastElement"
 WMMA=""
