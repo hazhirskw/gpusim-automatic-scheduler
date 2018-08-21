@@ -16,7 +16,7 @@ case $config in *\ *) echo "${RED} Error: Put the config name in ther first line
 exit 1
 ;; esac
 
-resultDir=~/workloads/result
+resultDir=~/.workload/result
 if [[ -z "$benchmarkDir" ]]
 then
         echo Error: Too few arguments!
@@ -58,6 +58,6 @@ done <<< "$workloads"
 echo $processList > $resultDir/$config/PL-${benchmarkName}.txt
 #Schedule a process for killing simulation processes after a certain time. e.g 48 hours
 echo par=$resultDir/$config/PL-${benchmarkName}.txt
-echo $config >$resultdir/lastRun
+echo $config > $resultDir/lastRun.txt
 cd $workloadsDir
 #echo "./3-3-3-sim-killer.sh $resultDir/$config/PL-${benchmarkName}.txt" | at now + 48 hours
